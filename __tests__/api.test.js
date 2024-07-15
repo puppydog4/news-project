@@ -18,7 +18,7 @@ describe("/api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body }) => {
-        expect(body.topics).toEqual(seedData.topicData);
+        expect(body).toEqual(seedData.topicData);
       });
   });
 });
