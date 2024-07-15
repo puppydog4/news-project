@@ -35,6 +35,26 @@ describe("/api", () => {
   });
 });
 describe("/api/articles", () => {
+  it("GET: 200 send serves an array of all articles with a comment count , ordered by date descending by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) =>
+          expect(article).toEqual({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          })
+        );
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
   describe("/api/articles/:article_id", () => {
     it("GET: 200 sends the article selected by id", () => {
       return request(app)
@@ -65,7 +85,7 @@ describe("/api/articles", () => {
           expect(body.message).toBe("Article by id: 9999 does not exist");
         });
     });
-    it("GET: 400 send an error when the id is invalid (not a number)", () => {
+    it("GET: 400 sends an error when the id is invalid (not a number)", () => {
       return request(app)
         .get("/api/articles/badrequest")
         .expect(400)

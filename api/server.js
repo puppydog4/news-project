@@ -6,11 +6,15 @@ const {
   handleBadRequest,
 } = require("./error-handlers");
 const { getApiDocs } = require("./controllers/api-controllers");
-const { getArticleById } = require("./controllers/articles-controllers");
+const {
+  getArticleById,
+  getArticles,
+} = require("./controllers/articles-controllers");
 const app = express();
 
 app.get("/api", getApiDocs);
 app.get("/api/topics", getTopics);
+app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.use(handleCustomErrors);
