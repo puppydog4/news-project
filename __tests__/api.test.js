@@ -19,7 +19,7 @@ describe("/api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual(seedData.topicData);
+        expect(body).toEqual({ topics: seedData.topicData });
       });
   });
 });
@@ -32,5 +32,46 @@ describe("/api", () => {
       .then(({ body }) => {
         expect(body).toEqual(endpoints);
       });
+  });
+});
+describe("/api/articles", () => {
+  describe("/api/articles/:article_id", () => {
+    it("GET: 200 sends the article selected by id", () => {
+      return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            article: [
+              {
+                title: "Sony Vaio; or, The Laptop",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: expect.any(String),
+                created_at: "2020-10-16T05:03:00.000Z",
+                votes: 0,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              },
+            ],
+          });
+        });
+    });
+    it("GET: 404 sends an error when the article by id does not exist", () => {
+      return request(app)
+        .get("/api/articles/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Article by id: 9999 does not exist");
+        });
+    });
+    it("GET: 400 send an error when the id is invalid (not a number)", () => {
+      return request(app)
+        .get("/api/articles/badrequest")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad Request");
+        });
+    });
   });
 });
