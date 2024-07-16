@@ -10,12 +10,16 @@ const {
   getArticleById,
   getArticles,
 } = require("./controllers/articles-controllers");
+const {
+  getCommentByArticleById,
+} = require("./controllers/comments-controllers");
 const app = express();
 
 app.get("/api", getApiDocs);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles/:article_id/comments", getCommentByArticleById);
 
 app.use(handleCustomErrors);
 app.use(handleBadRequest);

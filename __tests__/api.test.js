@@ -77,4 +77,22 @@ describe("/api/articles", () => {
       expect(body.message).toBe("Bad Request");
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    it("GET: 200 send an array of comments for the given article_id , sorted by most recent comment", async () => {
+      const { body } = await request(app)
+        .get("/api/articles/1/comments")
+        .expect(200);
+      body.comments.forEach((comment) =>
+        expect(comment).toEqual({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        })
+      );
+      expect(body.comments).toBeSortedBy("created_at", { descending: true });
+    });
+  });
 });
