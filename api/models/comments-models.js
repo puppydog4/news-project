@@ -1,5 +1,16 @@
 const db = require("../../db/connection");
 exports.fetchCommentsByArticleId = async (id) => {
+  const { rows: articleRows } = await db.query(
+    `SELECT article_id FROM articles WHERE article_id = $1`,
+    [id]
+  );
+
+  if (articleRows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      message: `Article with id ${id} does not exist`,
+    });
+  }
   const { rows } = await db.query(
     `SELECT comment_id , votes,created_at, author , body , article_id 
     FROM comments WHERE article_id = $1 ORDER BY created_at DESC`,
@@ -8,7 +19,7 @@ exports.fetchCommentsByArticleId = async (id) => {
   if (rows.length === 0) {
     return Promise.reject({
       status: 404,
-      message: `Article by id: ${id} does not exist`,
+      message: `There are no comments for article by id ${id}`,
     });
   }
   return rows;
