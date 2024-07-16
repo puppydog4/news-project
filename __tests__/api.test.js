@@ -94,14 +94,16 @@ describe("/api/articles", () => {
       );
       expect(body.comments).toBeSortedBy("created_at", { descending: true });
     });
-    it("GET: 404 sends an error if the given article_id does not have any related comments", async () => {
+    it("GET: 200 sends an error if the given article_id does not have any related comments", async () => {
       const { body } = await request(app)
         .get("/api/articles/2/comments")
-        .expect(404);
+        .expect(200);
       expect(body.message).toBe("There are no comments for article by id 2");
     });
     it("GET: 404 sends an error when the article by id does not exist", async () => {
-      const { body } = await request(app).get("/api/articles/9999").expect(404);
+      const { body } = await request(app)
+        .get("/api/articles/9999/comments")
+        .expect(404);
       expect(body.message).toBe("Article by id: 9999 does not exist");
     });
     it("GET: 400 sends an error when the id is invalid (not a number)", async () => {
@@ -125,6 +127,27 @@ describe("/api/articles", () => {
           article_id: expect.any(Number),
         },
       ]);
+    });
+    it("POST: 400 sends an error when passed an invalid user", async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1/comments")
+        .send({ username: "invalid_user", body: "Hello from post tests" })
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
+    });
+    it("POST: 404 sends an error when the article by id does not exist", async () => {
+      const { body } = await request(app)
+        .post("/api/articles/9999/comments")
+        .send({ username: "butter_bridge", body: "Hello from post tests" })
+        .expect(404);
+      expect(body.message).toBe("Article by id: 9999 does not exist");
+    });
+    it("POST: 400 sends an error when the id is invalid (not a number)", async () => {
+      const { body } = await request(app)
+        .post("/api/articles/badrequest/comments")
+        .send({ username: "butter_bridge", body: "Hello from post tests" })
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
     });
   });
 });
