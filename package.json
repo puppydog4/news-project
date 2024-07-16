@@ -4,6 +4,8 @@
   "description": "bc-nc-news",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
@@ -23,6 +25,7 @@
   "devDependencies": {
     "@eslint/js": "^9.7.0",
     "eslint": "^9.7.0",
+    "eslint-plugin-jest": "^28.6.0",
     "globals": "^15.8.0",
     "husky": "^8.0.2",
     "jest": "^27.5.1",

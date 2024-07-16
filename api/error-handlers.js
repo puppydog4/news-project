@@ -10,6 +10,6 @@ exports.handleBadRequest = (err, req, res, next) => {
   } else next(err);
 };
 
-exports.handleServerErrors = (err, req, res, next) => {
+exports.handleServerErrors = (err, req, res) => {
   res.status(500).send({ msg: "Internal Server Error" });
 };

@@ -27,7 +27,7 @@ exports.fetchArticles = async () => {
       articles.created_at DESC;`);
   return rows;
 };
-exports.fetchArticleById = async (id, next) => {
+exports.fetchArticleById = async (id) => {
   const { rows } = await db.query(
     "SELECT title , topic , author , body , created_at , votes , article_img_url FROM articles WHERE article_id = $1",
     [id]
