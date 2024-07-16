@@ -1,4 +1,5 @@
 const db = require("../../db/connection");
+const { checkArticleExists } = require("../utils/apiUtils");
 exports.fetchArticles = async () => {
   const { rows } = await db.query(`SELECT 
       articles.author, 
@@ -32,11 +33,6 @@ exports.fetchArticleById = async (id) => {
     "SELECT title , topic , author , body , created_at , votes , article_img_url FROM articles WHERE article_id = $1",
     [id]
   );
-  if (rows.length === 0) {
-    return Promise.reject({
-      status: 404,
-      message: `Article by id: ${id} does not exist`,
-    });
-  }
+  await checkArticleExists(id);
   return rows;
 };
