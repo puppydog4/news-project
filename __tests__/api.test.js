@@ -78,7 +78,7 @@ describe("/api/articles", () => {
     });
   });
   describe("/api/articles/:article_id/comments", () => {
-    it("GET: 200 send an array of comments for the given article_id , sorted by most recent comment", async () => {
+    it("GET: 200 sends an array of comments for the given article_id , sorted by most recent comment", async () => {
       const { body } = await request(app)
         .get("/api/articles/1/comments")
         .expect(200);
@@ -89,10 +89,26 @@ describe("/api/articles", () => {
           created_at: expect.any(String),
           author: expect.any(String),
           body: expect.any(String),
-          article_id: expect.any(Number),
+          article_id: 1,
         })
       );
       expect(body.comments).toBeSortedBy("created_at", { descending: true });
+    });
+    it("GET: 404 sends an error if the given article_id does not have any related comments", async () => {
+      const { body } = await request(app)
+        .get("/api/articles/2/comments")
+        .expect(404);
+      expect(body.message).toBe("There are no comments for article by id 2");
+    });
+    it("GET: 404 sends an error when the article by id does not exist", async () => {
+      const { body } = await request(app).get("/api/articles/9999").expect(404);
+      expect(body.message).toBe("Article by id: 9999 does not exist");
+    });
+    it("GET: 400 sends an error when the id is invalid (not a number)", async () => {
+      const { body } = await request(app)
+        .get("/api/articles/badrequest/comments")
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
     });
     it("POST: 201 add a comment to an article by article_id", async () => {
       const { body } = await request(app)
