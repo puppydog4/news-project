@@ -11,15 +11,19 @@ const {
   getArticles,
 } = require("./controllers/articles-controllers");
 const {
-  getCommentByArticleById,
+  postCommentByArticleId,
+  getCommentsByArticleById,
 } = require("./controllers/comments-controllers");
 const app = express();
+
+app.use(express.json());
 
 app.get("/api", getApiDocs);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
-app.get("/api/articles/:article_id/comments", getCommentByArticleById);
+app.get("/api/articles/:article_id/comments", getCommentsByArticleById);
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.use(handleCustomErrors);
 app.use(handleBadRequest);

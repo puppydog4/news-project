@@ -94,5 +94,21 @@ describe("/api/articles", () => {
       );
       expect(body.comments).toBeSortedBy("created_at", { descending: true });
     });
+    it("POST: 201 add a comment to an article by article_id", async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1/comments")
+        .send({ username: "butter_bridge", body: "Hello from post tests" })
+        .expect(201);
+      expect(body.comment).toEqual([
+        {
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "butter_bridge",
+          body: "Hello from post tests",
+          article_id: expect.any(Number),
+        },
+      ]);
+    });
   });
 });
