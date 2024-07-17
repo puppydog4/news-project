@@ -70,7 +70,6 @@ describe("/api/articles", () => {
       const { body } = await request(app)
         .get("/api/articles?order=bad-request")
         .expect(400);
-      console.log(body);
       expect(body.message).toBe("Bad Request");
     });
   });
