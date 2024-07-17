@@ -45,7 +45,34 @@ describe("/api/articles", () => {
     expect(body.articles.length > 0).toBe(true);
     expect(body.articles).toBeSortedBy("created_at", { descending: true });
   });
-
+  describe("/api/articles queries", () => {
+    it("GET: 200 sends all articles sorted by query", async () => {
+      const { body } = await request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200);
+      expect(body.articles).toBeSortedBy("votes", { descending: true });
+    });
+    it("GET: 200 sends all articles in query order", async () => {
+      const { body } = await request(app)
+        .get("/api/articles?order=asc")
+        .expect(200);
+      expect(body.articles).toBeSortedBy("created_at");
+    });
+    it("GET: 200 sends only the articles where the topic is same as the query", async () => {
+      const { body } = await request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200);
+      expect(body.articles.every((article) => article.topic === "cats")).toBe(
+        true
+      );
+    });
+    it("GET: 400 sends an error when passed an incorrect query", async () => {
+      const { body } = await request(app)
+        .get("/api/articles?order=bad-request")
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
+    });
+  });
   describe("/api/articles/:article_id", () => {
     it("GET: 200 sends the article selected by id", async () => {
       const { body } = await request(app).get("/api/articles/2").expect(200);
