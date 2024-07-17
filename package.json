@@ -11,7 +11,7 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
-    "prepare": "npx install husky"
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
