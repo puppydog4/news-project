@@ -25,7 +25,7 @@ exports.patchArticleById = async (req, res, next) => {
   const { inc_votes } = req.body;
   try {
     const article = await editArticleById(inc_votes, article_id);
-    res.status(200).send({ article });
+    res.status(200).send(article);
   } catch (error) {
     next(error);
   }

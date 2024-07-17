@@ -80,14 +80,27 @@ describe("/api/articles", () => {
       const { body } = await request(app).patch("/api/articles/1").send({
         inc_votes: 10,
       });
-      expect(body.article[0].votes).toBe(110);
+      expect(body.votes).toBe(110);
+      expect(body.article_id).toBe(1);
     });
     it("PATCH: 200 ignores extra properties passed in the request", async () => {
       const { body } = await request(app).patch("/api/articles/1").send({
         inc_votes: 10,
         extra_property: "hello",
       });
-      expect(body.article[0].votes).toBe(110);
+      expect(body.votes).toBe(110);
+      expect(body.article_id).toBe(1);
+    });
+    it("PATCH: 404 sends an error when the article by id does not exist", async () => {
+      const { body } = await request(app).get("/api/articles/9999").expect(404);
+      expect(body.message).toBe("Article by id: 9999 does not exist");
+    });
+
+    it("PATCH: 400 sends an error when the id is invalid (not a number)", async () => {
+      const { body } = await request(app)
+        .get("/api/articles/badrequest")
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
     });
     it("PATCH: 400 sends an error when the passed votes is not a number", async () => {
       const { body } = await request(app)
