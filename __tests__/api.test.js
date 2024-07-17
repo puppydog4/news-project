@@ -76,6 +76,12 @@ describe("/api/articles", () => {
         .expect(400);
       expect(body.message).toBe("Bad Request");
     });
+    it("PATCH: 200 sends the updated article", async () => {
+      const { body } = await request(app).patch("/api/articles/1").send({
+        inc_votes: 10,
+      });
+      expect(body.article[0].votes).toBe(110);
+    });
   });
   describe("/api/articles/:article_id/comments", () => {
     it("GET: 200 sends an array of comments for the given article_id , sorted by most recent comment", async () => {
@@ -124,7 +130,27 @@ describe("/api/articles", () => {
           created_at: expect.any(String),
           author: "butter_bridge",
           body: "Hello from post tests",
-          article_id: expect.any(Number),
+          article_id: 1,
+        },
+      ]);
+    });
+    it("POST: 201 ignores extra properties passed in the request", async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "butter_bridge",
+          body: "Hello from post tests",
+          extra: "extra property",
+        })
+        .expect(201);
+      expect(body.comment).toEqual([
+        {
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "butter_bridge",
+          body: "Hello from post tests",
+          article_id: 1,
         },
       ]);
     });
@@ -148,6 +174,13 @@ describe("/api/articles", () => {
         .send({ username: "butter_bridge", body: "Hello from post tests" })
         .expect(400);
       expect(body.message).toBe("Bad Request");
+    });
+    it("POST: 400 sends an error when the username or body are absent", async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1/comments")
+        .send({})
+        .expect(400);
+      expect(body.message).toBe(`username or body are absent`);
     });
   });
 });
