@@ -82,6 +82,25 @@ describe("/api/articles", () => {
       });
       expect(body.article[0].votes).toBe(110);
     });
+    it("PATCH: 200 ignores extra properties passed in the request", async () => {
+      const { body } = await request(app).patch("/api/articles/1").send({
+        inc_votes: 10,
+        extra_property: "hello",
+      });
+      expect(body.article[0].votes).toBe(110);
+    });
+    it("PATCH: 400 sends an error when the passed votes is not a number", async () => {
+      const { body } = await request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: "bad request" });
+      expect(body.message).toBe("Bad Request");
+    });
+    it("PATCH: 400 sends an erro when inc_vote is not passed", async () => {
+      const { body } = await request(app)
+        .patch("/api/articles/1")
+        .send({ bad_votes: 10 });
+      expect(body.message).toBe("inc_votes is absent");
+    });
   });
   describe("/api/articles/:article_id/comments", () => {
     it("GET: 200 sends an array of comments for the given article_id , sorted by most recent comment", async () => {
