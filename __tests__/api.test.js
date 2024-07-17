@@ -203,3 +203,23 @@ describe("/api/articles", () => {
     });
   });
 });
+
+describe("/api/comments", () => {
+  describe("/api/comments/:comment_id", () => {
+    it("DELETE: 204 when comment by id is succesfully deleted", async () => {
+      await request(app).delete("/api/comments/1").expect(204);
+    });
+    it("DELETE: 404 when comment by id does not exist", async () => {
+      const { body } = await request(app)
+        .delete("/api/comments/999")
+        .expect(404);
+      expect(body.message).toBe("Comment by id: 999 does not exist");
+    });
+    it("DELETE: 400 sends error when passed a bad request", async () => {
+      const { body } = await request(app)
+        .delete("/api/comments/badrequest")
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
+    });
+  });
+});
