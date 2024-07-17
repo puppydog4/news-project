@@ -236,3 +236,15 @@ describe("/api/comments", () => {
     });
   });
 });
+describe("/api/users", () => {
+  it("GET:200 sends an array of all users", async () => {
+    const { body } = await request(app).get("/api/users").expect(200);
+    body.users.forEach((user) =>
+      expect(user).toEqual({
+        username: expect.any(String),
+        name: expect.any(String),
+        avatar_url: expect.any(String),
+      })
+    );
+  });
+});
