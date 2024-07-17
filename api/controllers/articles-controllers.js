@@ -4,8 +4,9 @@ const {
   editArticleById,
 } = require("../models/articles-models");
 exports.getArticles = async (req, res, next) => {
+  const { sort_by, order, topic } = req.query;
   try {
-    const articles = await fetchArticles(next);
+    const articles = await fetchArticles(sort_by, order, topic);
     res.status(200).send({ articles });
   } catch (error) {
     next(error);
