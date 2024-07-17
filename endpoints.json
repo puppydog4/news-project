@@ -62,7 +62,7 @@
   "POST /api/articles/:article_id/comments":{
     "description": "create a new comment on the article provided by id and sends back the new comment",
     "queries": [],
-    "examplesRequest":{"username":"example_user", "body": "content of new comment"},
+    "exampleRequest":{"username":"example_user", "body": "content of new comment"},
     "exampleResponse": {
       "comment": [
         {
@@ -76,10 +76,10 @@
       ]
     }
   },
-  "GET /api/articles/:article_id":{
+  "PATCH /api/articles/:article_id":{
     "description": "updates the votes on the article with specified id and then send the updated article",
     "queries": [],
-    "examplesRequest":{
+    "exampleRequest":{
       "inc_votes": 10 
     },
     "exampleResponse": {
