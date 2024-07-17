@@ -36,3 +36,18 @@ exports.fetchArticleById = async (id) => {
   await checkArticleExists(id);
   return rows;
 };
+
+exports.editArticleById = async (votes, id) => {
+  await checkArticleExists(id);
+  if (votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      message: `inc_votes is absent`,
+    });
+  }
+  const { rows } = await db.query(
+    "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING title , topic , author , body , created_at , votes , article_img_url",
+    [votes, id]
+  );
+  return rows;
+};

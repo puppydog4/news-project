@@ -18,6 +18,12 @@ exports.fetchCommentsByArticleId = async (id) => {
 
 exports.createComment = async (id, author, body) => {
   await checkArticleExists(id);
+  if (author === undefined || body === undefined) {
+    return Promise.reject({
+      status: 400,
+      message: `username or body are absent`,
+    });
+  }
   const { rows } = await db.query(
     `INSERT INTO comments (author, body, article_id) VALUES ($1,$2 , $3) RETURNING *`,
     [author, body, id]
