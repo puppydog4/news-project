@@ -98,5 +98,16 @@
   }, "DELETE /api/comments/:comment_id":{
     "description": "deletes comment by id",
     "queries": []
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [{
+        "username":"example_user",
+        "name": "example_name",
+        "avatar_url": "example_url"
+      }]
+    }
   }
 }
