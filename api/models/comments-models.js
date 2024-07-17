@@ -1,5 +1,5 @@
 const db = require("../../db/connection");
-const { checkArticleExists } = require("../utils/apiUtils");
+const { checkArticleExists, checkCommentExists } = require("../utils/apiUtils");
 exports.fetchCommentsByArticleId = async (id) => {
   await checkArticleExists(id);
   const { rows } = await db.query(
@@ -29,4 +29,10 @@ exports.createComment = async (id, author, body) => {
     [author, body, id]
   );
   return rows;
+};
+
+exports.removeComment = async (id) => {
+  await checkCommentExists(id);
+  await db.query(`DELETE FROM comments WHERE comment_id = $1`, [id]);
+  return;
 };
