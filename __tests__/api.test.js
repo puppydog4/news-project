@@ -278,4 +278,21 @@ describe("/api/users", () => {
       })
     );
   });
+  describe("/api/users/:username", () => {
+    it("GET:200 sends the user selected by username", async () => {
+      const { body } = await request(app)
+        .get("/api/users/icellusedkars")
+        .expect(200);
+      expect(body.user).toEqual({
+        username: "icellusedkars",
+        name: "sam",
+        avatar_url:
+          "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+      });
+    });
+    it("GET:404 sends an error if the user by username does not exist", async () => {
+      const { body } = await request(app).get("/api/users/no_user").expect(404);
+      expect(body.message).toBe("User: no_user does not exist");
+    });
+  });
 });

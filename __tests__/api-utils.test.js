@@ -4,6 +4,7 @@ const db = require("../db/connection.js");
 const {
   checkArticleExists,
   checkCommentExists,
+  checkUserExists,
 } = require("../api/utils/apiUtils");
 
 beforeEach(async () => {
@@ -28,6 +29,15 @@ describe("checkCommentExists", () => {
     await expect(checkCommentExists(999)).rejects.toEqual({
       status: 404,
       message: "Comment by id: 999 does not exist",
+    });
+  });
+});
+
+describe("checkUserExists", () => {
+  it("should throw a 404 error if the user does not exist", async () => {
+    await expect(checkUserExists("no_user")).rejects.toEqual({
+      status: 404,
+      message: "User: no_user does not exist",
     });
   });
 });
