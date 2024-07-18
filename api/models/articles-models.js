@@ -62,7 +62,34 @@ ON
 };
 exports.fetchArticleById = async (id) => {
   const { rows } = await db.query(
-    "SELECT title , topic , author , body , created_at , votes , article_img_url FROM articles WHERE article_id = $1",
+    `SELECT 
+      articles.title, 
+      articles.topic, 
+      articles.author, 
+      articles.body, 
+      articles.created_at, 
+      articles.votes, 
+      articles.article_img_url,
+      COUNT(comments.article_id) AS comment_count  
+  FROM 
+      articles 
+  LEFT JOIN 
+      comments 
+  ON 
+      articles.article_id = comments.article_id
+  WHERE 
+      articles.article_id = $1
+  GROUP BY 
+      articles.article_id, 
+      articles.title, 
+      articles.topic, 
+      articles.author, 
+      articles.body, 
+      articles.created_at, 
+      articles.votes, 
+      articles.article_img_url
+  ;
+`,
     [id]
   );
   await checkArticleExists(id);
