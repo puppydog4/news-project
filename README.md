@@ -1,10 +1,10 @@
 # NC-News
 
-Hosted Version : https://news-project-ebx2.onrender.com/api/
+Hosted Version: https://news-project-ebx2.onrender.com/api/
 
 ## Summary
 
-This project is a backend API for a Reddit-like application, providing endpoints for user , topics and comment management, and fetching articles by query. The API is built using Node.js, Express, and PostgreSQL, designed to handle typical social media interactions efficiently.
+This project is a backend API for a Reddit-like application, providing endpoints for users, topics, comment management, and fetching articles by query. The API is built using Node.js, Express, and PostgreSQL.
 
 ## Installation
 
@@ -24,7 +24,7 @@ Prerequisites
 
     npm install
 
-### Create .env.development and .env.test file in root directory
+### Create .env.development and .env.test files in the root directory
 
     // .env.development //
 
@@ -45,7 +45,7 @@ Prerequisites
 
 This will start the application on port 9090.
 
-Go to http://localhost:9090/api to see a list of all available end points.
+Go to http://localhost:9090/api to see a list of all available endpoints.
 
 ### Run Tests
 
