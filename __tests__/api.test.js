@@ -69,11 +69,17 @@ describe("/api/articles", () => {
         true
       );
     });
-    it("GET: 400 sends an error when passed an incorrect query", async () => {
+    it("GET: 400 sends an error when passed an incorrect query parameter", async () => {
       const { body } = await request(app)
         .get("/api/articles?order=bad-request")
         .expect(400);
       expect(body.message).toBe("Bad Request");
+    });
+    it("GET:400 sends an error when passed an invalid query", async () => {
+      const { body } = await request(app)
+        .get("/api/articles?bad-query=bad-request")
+        .expect(400);
+      expect(body.message).toBe("Invalid Query");
     });
   });
   describe("/api/articles/:article_id", () => {
