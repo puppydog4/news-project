@@ -29,4 +29,19 @@ const checkCommentExists = async (id) => {
   return;
 };
 
-module.exports = { checkArticleExists, checkCommentExists };
+const checkUserExists = async (username) => {
+  const { rows: userRows } = await db.query(
+    `SELECT username FROM users WHERE username = $1`,
+    [username]
+  );
+
+  if (userRows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      message: `User: ${username} does not exist`,
+    });
+  }
+  return;
+};
+
+module.exports = { checkArticleExists, checkCommentExists, checkUserExists };

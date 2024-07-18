@@ -4,6 +4,12 @@ const {
   editArticleById,
 } = require("../models/articles-models");
 exports.getArticles = async (req, res, next) => {
+  const allowedQueries = ["sort_by", "order", "topic"];
+  if (
+    !Object.keys(req.query).every((query) => allowedQueries.includes(query))
+  ) {
+    next({ status: 400, message: "Invalid Query" });
+  }
   const { sort_by, order, topic } = req.query;
   try {
     const articles = await fetchArticles(sort_by, order, topic);

@@ -5,9 +5,13 @@ const seed = require("../db/seeds/seed");
 const db = require("../db/connection.js");
 const app = require("../api/server");
 
-beforeEach(async () => {
+beforeAll(async () => {
   await seed(seedData);
 });
+
+// beforeEach(async () => {
+//   await seed(seedData);
+// });
 
 afterAll(async () => {
   await db.end();
@@ -69,11 +73,17 @@ describe("/api/articles", () => {
         true
       );
     });
-    it("GET: 400 sends an error when passed an incorrect query", async () => {
+    it("GET: 400 sends an error when passed an incorrect query parameter", async () => {
       const { body } = await request(app)
         .get("/api/articles?order=bad-request")
         .expect(400);
       expect(body.message).toBe("Bad Request");
+    });
+    it("GET:400 sends an error when passed an invalid query", async () => {
+      const { body } = await request(app)
+        .get("/api/articles?bad-query=bad-request")
+        .expect(400);
+      expect(body.message).toBe("Invalid Query");
     });
   });
   describe("/api/articles/:article_id", () => {
@@ -119,17 +129,19 @@ describe("/api/articles", () => {
         inc_votes: 10,
         extra_property: "hello",
       });
-      expect(body.votes).toBe(110);
+      expect(body.votes).toBe(120);
       expect(body.article_id).toBe(1);
     });
     it("PATCH: 404 sends an error when the article by id does not exist", async () => {
-      const { body } = await request(app).get("/api/articles/9999").expect(404);
+      const { body } = await request(app)
+        .patch("/api/articles/9999")
+        .expect(404);
       expect(body.message).toBe("Article by id: 9999 does not exist");
     });
 
     it("PATCH: 400 sends an error when the id is invalid (not a number)", async () => {
       const { body } = await request(app)
-        .get("/api/articles/badrequest")
+        .patch("/api/articles/badrequest")
         .expect(400);
       expect(body.message).toBe("Bad Request");
     });
@@ -265,6 +277,46 @@ describe("/api/comments", () => {
         .expect(400);
       expect(body.message).toBe("Bad Request");
     });
+    it("PATCH: 200 sends the updated comment", async () => {
+      const { body } = await request(app).patch("/api/comments/2").send({
+        inc_votes: 10,
+      });
+      expect(body.votes).toBe(24);
+      expect(body.comment_id).toBe(2);
+    });
+    it("PATCH: 200 ignores extra properties passed in the request", async () => {
+      const { body } = await request(app).patch("/api/comments/2").send({
+        inc_votes: 10,
+        extra_property: "hello",
+      });
+      expect(body.votes).toBe(34);
+      expect(body.comment_id).toBe(2);
+    });
+    it("PATCH: 404 sends an error when the comment by id does not exist", async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/9999")
+        .expect(404);
+      expect(body.message).toBe("Comment by id: 9999 does not exist");
+    });
+
+    it("PATCH: 400 sends an error when the id is invalid (not a number)", async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/badrequest")
+        .expect(400);
+      expect(body.message).toBe("Bad Request");
+    });
+    it("PATCH: 400 sends an error when the passed votes is not a number", async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: "bad request" });
+      expect(body.message).toBe("Bad Request");
+    });
+    it("PATCH: 400 sends an error when inc_vote is not passed", async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/2")
+        .send({ bad_votes: 10 });
+      expect(body.message).toBe("inc_votes is absent");
+    });
   });
 });
 describe("/api/users", () => {
@@ -277,5 +329,22 @@ describe("/api/users", () => {
         avatar_url: expect.any(String),
       })
     );
+  });
+  describe("/api/users/:username", () => {
+    it("GET:200 sends the user selected by username", async () => {
+      const { body } = await request(app)
+        .get("/api/users/icellusedkars")
+        .expect(200);
+      expect(body.user).toEqual({
+        username: "icellusedkars",
+        name: "sam",
+        avatar_url:
+          "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+      });
+    });
+    it("GET:404 sends an error if the user by username does not exist", async () => {
+      const { body } = await request(app).get("/api/users/no_user").expect(404);
+      expect(body.message).toBe("User: no_user does not exist");
+    });
   });
 });
