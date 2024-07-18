@@ -36,3 +36,18 @@ exports.removeComment = async (id) => {
   await db.query(`DELETE FROM comments WHERE comment_id = $1`, [id]);
   return;
 };
+
+exports.editCommentById = async (votes, id) => {
+  await checkCommentExists(id);
+  if (votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      message: `inc_votes is absent`,
+    });
+  }
+  const { rows } = await db.query(
+    "UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *",
+    [votes, id]
+  );
+  return rows[0];
+};
