@@ -5,7 +5,7 @@ exports.fetchArticles = async (
   orderQuery = "desc",
   topicQuery
 ) => {
-  const allowedInputs = [
+  const allowedSortBy = [
     "author",
     "title",
     "article_id",
@@ -14,11 +14,11 @@ exports.fetchArticles = async (
     "votes",
     "article_img_url",
     "comment_count",
-    "asc",
-    "desc",
   ];
+  const allowedTopics = [];
+  const allowedOrders = ["asc", "desc"];
   const { rows: topicRows } = await db.query("SELECT slug FROM topics;");
-  topicRows.forEach((topic) => allowedInputs.push(Object.values(topic)[0]));
+  topicRows.forEach((topic) => allowedTopics.push(Object.values(topic)[0]));
   let arrayQuery = [];
   let queryString = `SELECT 
   articles.author, 
@@ -36,9 +36,9 @@ LEFT JOIN
 ON 
   articles.article_id = comments.article_id`;
   if (
-    !allowedInputs.includes(sortByQuery) ||
-    !allowedInputs.includes(orderQuery) ||
-    (!allowedInputs.includes(topicQuery) && topicQuery !== undefined)
+    !allowedSortBy.includes(sortByQuery) ||
+    !allowedOrders.includes(orderQuery) ||
+    (!allowedTopics.includes(topicQuery) && topicQuery !== undefined)
   ) {
     return Promise.reject({ status: 400, message: "Bad Request" });
   }
@@ -48,15 +48,8 @@ ON
   }
   queryString += `
   GROUP BY 
-    articles.author, 
-    articles.title, 
-    articles.article_id, 
-    articles.topic, 
-    articles.created_at, 
-    articles.votes, 
-    articles.article_img_url 
+    articles.article_id
   ORDER BY ${sortByQuery} ${orderQuery};`;
-
   const { rows } = await db.query(queryString, arrayQuery);
   return rows;
 };
@@ -80,15 +73,7 @@ exports.fetchArticleById = async (id) => {
   WHERE 
       articles.article_id = $1
   GROUP BY 
-      articles.article_id, 
-      articles.title, 
-      articles.topic, 
-      articles.author, 
-      articles.body, 
-      articles.created_at, 
-      articles.votes, 
-      articles.article_img_url
-  ;
+      articles.article_id
 `,
     [id]
   );

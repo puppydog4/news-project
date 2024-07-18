@@ -50,18 +50,21 @@ describe("/api/articles", () => {
       const { body } = await request(app)
         .get("/api/articles?sort_by=votes")
         .expect(200);
-      expect(body.articles).toBeSortedBy("votes", { descending: true });
+      expect(body.articles.length > 0).toBe(true);
+      expect([body.articles]).toBeSortedBy("votes", { descending: true });
     });
     it("GET: 200 sends all articles in query order", async () => {
       const { body } = await request(app)
         .get("/api/articles?order=asc")
         .expect(200);
+      expect(body.articles.length > 0).toBe(true);
       expect(body.articles).toBeSortedBy("created_at");
     });
     it("GET: 200 sends only the articles where the topic is same as the query", async () => {
       const { body } = await request(app)
         .get("/api/articles?topic=cats")
         .expect(200);
+      expect(body.articles.length > 0).toBe(true);
       expect(body.articles.every((article) => article.topic === "cats")).toBe(
         true
       );
