@@ -95,3 +95,28 @@ exports.editArticleById = async (votes, id) => {
   );
   return rows[0];
 };
+
+exports.createArticle = async (author, title, body, topic, article_img_url) => {
+  let arrayArticle = [author, title, body, topic, article_img_url];
+  if (
+    author === undefined ||
+    title === undefined ||
+    body === undefined ||
+    topic === undefined
+  ) {
+    return Promise.reject({ status: 400, message: "Field missing" });
+  }
+  if (article_img_url === undefined) {
+    arrayArticle.pop();
+    const { rows } = await db.query(
+      "INSERT INTO articles (author,title,body,topic) VALUES ($1,$2,$3,$4) RETURNING *",
+      arrayArticle
+    );
+    return rows[0];
+  }
+  const { rows } = await db.query(
+    "INSERT INTO articles (author,title,body,topic,article_img_url) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+    arrayArticle
+  );
+  return rows[0];
+};

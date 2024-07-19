@@ -85,6 +85,62 @@ describe("/api/articles", () => {
         .expect(400);
       expect(body.message).toBe("Invalid Query");
     });
+    it("POST:201 sends back the posted article", async () => {
+      const { body } = await request(app)
+        .post("/api/articles")
+        .send({
+          author: "icellusedkars",
+          topic: "cats",
+          body: "test body hello",
+          title: "hello from test",
+        })
+        .expect(201);
+      expect(body).toEqual({
+        article_id: expect.any(Number),
+        title: "hello from test",
+        topic: "cats",
+        author: "icellusedkars",
+        body: "test body hello",
+        created_at: expect.any(String),
+        votes: 0,
+        article_img_url:
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+      });
+    });
+    it("POST:400 sends back an error when the request is missing required fields", async () => {
+      const { body } = await request(app)
+        .post("/api/articles")
+        .send({
+          topic: "cats",
+          body: "test body hello",
+          title: "hello from test",
+        })
+        .expect(400);
+      expect(body.message).toBe("Field missing");
+    });
+    it("POST:201 ignores extra keys in request object", async () => {
+      const { body } = await request(app)
+        .post("/api/articles")
+        .send({
+          author: "icellusedkars",
+          topic: "cats",
+          body: "test body hello",
+          title: "hello from test",
+          badRequest: "bad request",
+        })
+        .expect(201);
+      expect(body).toEqual({
+        article_id: expect.any(Number),
+        title: "hello from test",
+        topic: "cats",
+        author: "icellusedkars",
+        body: "test body hello",
+        created_at: expect.any(String),
+        votes: 0,
+        article_img_url:
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+      });
+    });
   });
   describe("/api/articles/:article_id", () => {
     it("GET: 200 sends the article selected by id", async () => {

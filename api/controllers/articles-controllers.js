@@ -2,6 +2,7 @@ const {
   fetchArticleById,
   fetchArticles,
   editArticleById,
+  createArticle,
 } = require("../models/articles-models");
 exports.getArticles = async (req, res, next) => {
   const allowedQueries = ["sort_by", "order", "topic"];
@@ -33,6 +34,22 @@ exports.patchArticleById = async (req, res, next) => {
   try {
     const article = await editArticleById(inc_votes, article_id);
     res.status(200).send(article);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.postArticle = async (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+  try {
+    const article = await createArticle(
+      author,
+      title,
+      body,
+      topic,
+      article_img_url
+    );
+    res.status(201).send(article);
   } catch (error) {
     next(error);
   }
