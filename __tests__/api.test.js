@@ -39,6 +39,7 @@ describe("/api/articles", () => {
         author: expect.any(String),
         title: expect.any(String),
         article_id: expect.any(Number),
+        body: expect.any(String),
         topic: expect.any(String),
         created_at: expect.any(String),
         votes: expect.any(Number),
